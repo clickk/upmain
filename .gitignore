@@ -2,3 +2,14 @@ node_modules/
 dist/
 .DS_Store
 .thumbnail
+.claude/
+
+# Legacy prototype files (replaced by src/)
+Up\ Main.html
+app.jsx
+brand.jsx
+home.jsx
+product.jsx
+tracker.jsx
+tweaks-panel.jsx
+styles.css
