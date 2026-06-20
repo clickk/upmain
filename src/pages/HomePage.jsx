@@ -45,7 +45,7 @@ export default function HomePage({ setPage }) {
           </div>
         </div>
         <div className="visual">
-          <Placeholder label={`${HERO.class} three-quarter hero`} detail="studio · bone bg · scale rule" corner="UM-45 / 01" scaleRule />
+          <Placeholder label={`${HERO.class} three-quarter hero`} detail="studio · bone bg · scale rule" corner="UM-45 / 01" scaleRule src={HERO.img} />
         </div>
       </section>
 
@@ -109,7 +109,7 @@ export default function HomePage({ setPage }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gutter)' }}>
           {IN_STOCK.map((p, i) => (
             <article key={p.id} className="product-card" style={{ border: '1px solid var(--timetable-line)', background: 'var(--bone)', padding: 22 }}>
-              <Placeholder label={`${p.class} · ${p.state}`} detail={p.liveries[0].livery} corner={`UM-${p.class.replace(/\D/g, '') || p.class}`} />
+              <Placeholder label={`${p.class} · ${p.state}`} detail={p.liveries[0].livery} corner={`UM-${p.class.replace(/\D/g, '') || p.class}`} src={p.img} />
               <div className="eyebrow">{p.class} · {p.mfr}</div>
               <h4 className="title" style={{ fontSize: 22 }}>{p.title}</h4>
               <div className="meta">

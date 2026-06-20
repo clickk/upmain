@@ -118,7 +118,7 @@ export default function TrackerPage() {
               <span className="tnum">{r.eta}</span>
               <small>{r.year}</small>
             </div>
-            <Placeholder className="thumb" label={r.class} detail={r.mfr.split(' ')[0]} corner={`PRE-${String(i + 1).padStart(2, '0')}`} />
+            <Placeholder className="thumb" label={r.class} detail={r.mfr.split(' ')[0]} corner={`PRE-${String(i + 1).padStart(2, '0')}`} src={r.img} />
             <div>
               <div className="eyebrow" style={{ marginBottom: 6 }}>{r.class} · {r.mfr} · {r.scale}</div>
               <h3 className="title">{r.title}</h3>

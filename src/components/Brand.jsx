@@ -64,9 +64,19 @@ export const Placeholder = ({
   dark = false,
   scaleRule = false,
   corner,
+  src,
   style,
   className = '',
-}) => (
+}) => {
+  if (src) {
+    return (
+      <div className={`ph has-img ${className}`} style={style}>
+        {corner ? <div className="corner">{corner}</div> : null}
+        <img src={src} alt={label} loading="lazy" />
+      </div>
+    )
+  }
+  return (
   <div className={`ph ${dark ? 'dark' : ''} ${className}`} style={style}>
     {corner ? <div className="corner">{corner}</div> : null}
     {scaleRule ? (
@@ -86,7 +96,8 @@ export const Placeholder = ({
       <span style={{ opacity: 0.6 }}>{detail}</span>
     </div>
   </div>
-)
+  )
+}
 
 // ─── Header / nav ─────────────────────────────────────────────────────────────
 
@@ -103,8 +114,11 @@ const UtilityBar = () => (
   </div>
 )
 
-export const Header = ({ page, setPage }) => {
+export const Header = ({ page, params = {}, setPage }) => {
   const [searchOpen, setSearchOpen] = React.useState(false)
+
+  // active helper — a catalogue category link is active when page+cat match
+  const isCat = (cat) => page === 'catalogue' && (params.cat || 'all') === cat
 
   // ⌘K / Ctrl+K global shortcut
   React.useEffect(() => {
@@ -144,17 +158,17 @@ export const Header = ({ page, setPage }) => {
       <nav className="primary-nav">
         <div className="inner">
           <a className={page === 'home' ? 'active' : ''} onClick={() => setPage('home')} style={{ cursor: 'pointer' }}>Home</a>
-          <a style={{ cursor: 'pointer' }}>Steam</a>
-          <a style={{ cursor: 'pointer' }}>Diesel</a>
-          <a style={{ cursor: 'pointer' }}>Electric</a>
-          <a style={{ cursor: 'pointer' }}>Rolling Stock</a>
-          <a style={{ cursor: 'pointer' }}>Scenery &amp; Track</a>
+          <a className={isCat('steam') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'steam' })} style={{ cursor: 'pointer' }}>Steam</a>
+          <a className={isCat('diesel') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'diesel' })} style={{ cursor: 'pointer' }}>Diesel</a>
+          <a className={isCat('electric') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'electric' })} style={{ cursor: 'pointer' }}>Electric</a>
+          <a className={isCat('rolling-stock') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'rolling-stock' })} style={{ cursor: 'pointer' }}>Rolling Stock</a>
+          <a className={isCat('scenery') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'scenery' })} style={{ cursor: 'pointer' }}>Scenery &amp; Track</a>
           <a className={page === 'tracker' ? 'active' : ''} onClick={() => setPage('tracker')} style={{ cursor: 'pointer' }}>
             Pre-orders <span className="new-dot" />
           </a>
-          <a onClick={() => setPage('home')} style={{ cursor: 'pointer' }}>Marketplace</a>
-          <a style={{ cursor: 'pointer' }}>Guides</a>
-          <a style={{ marginLeft: 'auto', color: 'var(--steel)', cursor: 'pointer' }}>Estate Intake</a>
+          <a className={isCat('marketplace') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'marketplace' })} style={{ cursor: 'pointer' }}>Marketplace</a>
+          <a className={isCat('guides') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'guides' })} style={{ cursor: 'pointer' }}>Guides</a>
+          <a className={isCat('estate') ? 'active' : ''} onClick={() => setPage('catalogue', { cat: 'estate' })} style={{ marginLeft: 'auto', color: 'var(--steel)', cursor: 'pointer' }}>Estate Intake</a>
         </div>
       </nav>
 

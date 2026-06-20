@@ -243,6 +243,27 @@ export const PRODUCTS = [
   },
 ]
 
+// ─── Product photography (scraped from auscisionmodels.com.au) ──────────────────
+
+const IMG = {
+  '45-class': '/images/45-1F1.jpg',
+  '421-class': '/images/421-1a.jpg',
+  'nr-class': '/images/NR-40a.jpg',
+  'nr-class-rap': '/images/NR-48a.jpg',
+  '44-class-mk2': '/images/44-1a.jpg',
+  '44-class-mk3': '/images/44-2a.jpg',
+  '49-class': '/images/49-1.jpg',
+  'a-class': '/images/A-13.jpg',
+  'an-class': '/images/AN-13.jpg',
+  'x-class-s2': '/images/X-17.jpg',
+  'x-class-s3': '/images/X-32.jpg',
+  '48-class': '/images/48-1a.jpg',
+}
+const GALLERY = {
+  '421-class': ['/images/421-19a.jpg', '/images/421-20a.jpg', '/images/421-21a.jpg'],
+}
+PRODUCTS.forEach(p => { p.img = IMG[p.id]; p.gallery = GALLERY[p.id] || [] })
+
 // ─── Derived views ─────────────────────────────────────────────────────────────
 
 export const IN_STOCK = PRODUCTS.filter(p => p.status === 'in-stock')
@@ -256,7 +277,7 @@ export const TRACKER_DATA = PRODUCTS
   .map(p => ({
     eta: p.eta, year: p.year, quarter: p.quarter,
     class: p.class, title: p.title, mfr: p.mfr, scale: p.scale,
-    units: p.units, stage: p.stage, note: p.note,
+    units: p.units, stage: p.stage, note: p.note, img: p.img,
     price: `A$${p.dcPrice} – ${p.soundPrice}`,
   }))
 

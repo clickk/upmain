@@ -33,11 +33,11 @@ export default function ProductNew({ setPage }) {
 
       <div className="pd-grid">
         <div className="pd-gallery">
-          <Placeholder label={`${P.class} three-quarter hero`} detail="studio · bone bg" corner={`UM-PRD-${P.class.replace(/\D/g, '')} / 01`} scaleRule className="hero-img" />
+          <Placeholder label={`${P.class} three-quarter hero`} detail="studio · bone bg" corner={`UM-PRD-${P.class.replace(/\D/g, '')} / 01`} scaleRule className="hero-img" src={P.img} />
           <div className="grid-imgs">
-            <Placeholder label="side elevation" detail="full broadside" corner="02" />
-            <Placeholder label="cab detail" detail="number boards" corner="03" />
-            <Placeholder label="underframe" detail="bogie crop" corner="04" />
+            {P.gallery.map((g, i) => (
+              <Placeholder key={i} label={`${P.class} livery`} detail="catalogue render" corner={String(i + 2).padStart(2, '0')} src={g} />
+            ))}
           </div>
         </div>
 

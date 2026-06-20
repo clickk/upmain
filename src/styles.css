@@ -336,6 +336,18 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border-color: var(--smokebox-80);
   color: var(--timetable);
 }
+.ph.has-img {
+  background: var(--bone);
+}
+.ph.has-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .ph .label {
   position: absolute;
   inset: auto 0 0 0;
@@ -1136,6 +1148,30 @@ button { font: inherit; color: inherit; cursor: pointer; }
   --shell-pad: 56px;
 }
 .app-shell[data-density="comfy"] .section { padding-top: 96px; }
+
+/* ─── Catalogue / shop listing ───────────────────────────────────── */
+
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gutter);
+  padding: 8px 0 0;
+}
+.catalogue-card {
+  border: 1px solid var(--timetable-line);
+  background: var(--bone);
+  padding: 18px;
+  gap: 12px;
+  transition: border-color .12s, transform .06s;
+}
+.catalogue-card:hover { border-color: var(--smokebox); }
+.catalogue-card:active { transform: translateY(1px); }
+.catalogue-card .ph { aspect-ratio: 3/2; }
+
+.catalogue-empty {
+  text-align: center;
+  padding: 80px 20px 64px;
+}
 
 /* ─── Search overlay ─────────────────────────────────────────────── */
 
