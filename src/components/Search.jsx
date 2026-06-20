@@ -38,13 +38,14 @@ export default function SearchOverlay({ onNavigate, onClose }) {
       e.preventDefault()
       setSelectedIdx(i => Math.max(i - 1, 0))
     } else if (e.key === 'Enter' && results[selectedIdx]) {
-      onNavigate(results[selectedIdx].page)
+      const r = results[selectedIdx]
+      onNavigate(r.page, r.params)
       onClose()
     }
   }
 
-  const handleResultClick = (page) => {
-    onNavigate(page)
+  const handleResultClick = (item) => {
+    onNavigate(item.page, item.params)
     onClose()
   }
 
@@ -84,7 +85,7 @@ export default function SearchOverlay({ onNavigate, onClose }) {
                   <div
                     key={item.idx}
                     className={`search-result ${item.idx === selectedIdx ? 'selected' : ''}`}
-                    onClick={() => handleResultClick(item.page)}
+                    onClick={() => handleResultClick(item)}
                     onMouseEnter={() => setSelectedIdx(item.idx)}
                   >
                     <span className={`search-result-type ${item.type}`}>{TYPE_LABELS[item.type]}</span>

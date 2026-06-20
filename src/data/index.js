@@ -246,21 +246,21 @@ export const PRODUCTS = [
 // ─── Product photography (scraped from auscisionmodels.com.au) ──────────────────
 
 const IMG = {
-  '45-class': '/images/45-1F1.jpg',
-  '421-class': '/images/421-1a.jpg',
-  'nr-class': '/images/NR-40a.jpg',
-  'nr-class-rap': '/images/NR-48a.jpg',
-  '44-class-mk2': '/images/44-1a.jpg',
-  '44-class-mk3': '/images/44-2a.jpg',
-  '49-class': '/images/49-1.jpg',
-  'a-class': '/images/A-13.jpg',
-  'an-class': '/images/AN-13.jpg',
-  'x-class-s2': '/images/X-17.jpg',
-  'x-class-s3': '/images/X-32.jpg',
-  '48-class': '/images/48-1a.jpg',
+  '45-class': '/images/45-1F1.webp',
+  '421-class': '/images/421-1a.webp',
+  'nr-class': '/images/NR-40a.webp',
+  'nr-class-rap': '/images/NR-48a.webp',
+  '44-class-mk2': '/images/44-1a.webp',
+  '44-class-mk3': '/images/44-2a.webp',
+  '49-class': '/images/49-1.webp',
+  'a-class': '/images/A-13.webp',
+  'an-class': '/images/AN-13.webp',
+  'x-class-s2': '/images/X-17.webp',
+  'x-class-s3': '/images/X-32.webp',
+  '48-class': '/images/48-1a.webp',
 }
 const GALLERY = {
-  '421-class': ['/images/421-19a.jpg', '/images/421-20a.jpg', '/images/421-21a.jpg'],
+  '421-class': ['/images/421-19a.webp', '/images/421-20a.webp', '/images/421-21a.webp'],
 }
 PRODUCTS.forEach(p => { p.img = IMG[p.id]; p.gallery = GALLERY[p.id] || [] })
 
@@ -275,6 +275,7 @@ const STAGE_NOTE = {
 export const TRACKER_DATA = PRODUCTS
   .filter(p => p.status !== 'in-stock')
   .map(p => ({
+    id: p.id,
     eta: p.eta, year: p.year, quarter: p.quarter,
     class: p.class, title: p.title, mfr: p.mfr, scale: p.scale,
     units: p.units, stage: p.stage, note: p.note, img: p.img,
@@ -334,7 +335,8 @@ const SEARCH_INDEX = [
     type: p.status === 'in-stock' ? 'new' : 'preorder',
     title: p.title,
     meta: `${p.class} · ${p.scale} · A$${p.dcPrice} – ${p.soundPrice} · ${STAGE_NOTE[p.stage]}`,
-    page: p.status === 'in-stock' ? 'product-new' : 'tracker',
+    page: 'product-new',
+    params: { id: p.id },
     keywords: [
       p.class, p.title, p.mfr, p.scale, p.state, p.status,
       ...p.roadNumbers, ...p.liveries.map(l => l.livery),
@@ -346,6 +348,7 @@ const SEARCH_INDEX = [
     title: m.title,
     meta: `${m.class} · ${m.grade} · ${m.price}`,
     page: 'product-used',
+    params: { id: m.road },
     keywords: [m.road, m.title, m.mfr, m.class, m.grade, 'used', 'secondhand', 'ho', m.seller].join(' ').toLowerCase(),
   })),
 
@@ -353,7 +356,8 @@ const SEARCH_INDEX = [
     type: 'class',
     title: `${c.n} Class — ${c.sub}`,
     meta: `${c.mfr} · ${c.count} run${c.count > 1 ? 's' : ''} · ${c.liveries} liveries`,
-    page: 'home',
+    page: 'catalogue',
+    params: { cat: 'diesel' },
     keywords: [`${c.n} class`, c.sub, c.mfr, 'class', 'index'].join(' ').toLowerCase(),
   })),
 ]

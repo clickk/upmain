@@ -1,15 +1,19 @@
 import React from 'react'
 import { Placeholder, StatusBadge } from '../components/Brand.jsx'
-import { FEATURED_NEW } from '../data/index.js'
+import { PRODUCTS, FEATURED_NEW } from '../data/index.js'
 
-const P = FEATURED_NEW // 421 Class
+export default function ProductNew({ setPage, params = {} }) {
+  const P = PRODUCTS.find(p => p.id === params.id) || FEATURED_NEW
+  const inStock = P.status === 'in-stock'
 
-export default function ProductNew({ setPage }) {
   const [tab, setTab] = React.useState('prototype')
   const [qty, setQty] = React.useState(1)
   const [sound, setSound] = React.useState(true)
   const [playing, setPlaying] = React.useState(false)
   const [lit, setLit] = React.useState(8)
+
+  // Reset transient UI when the product changes
+  React.useEffect(() => { setTab('prototype'); setQty(1); setSound(true); setPlaying(false) }, [P.id])
 
   const unitPrice = sound ? P.soundPrice : P.dcPrice
 
@@ -24,30 +28,32 @@ export default function ProductNew({ setPage }) {
       <div className="pd-crumb">
         <a onClick={() => setPage('home')} style={{ cursor: 'pointer' }}>Home</a>
         <span className="sep">›</span>
-        <a style={{ cursor: 'pointer' }}>Diesel</a>
+        <a onClick={() => setPage('catalogue', { cat: 'diesel' })} style={{ cursor: 'pointer' }}>Diesel</a>
         <span className="sep">›</span>
-        <a style={{ cursor: 'pointer' }}>{P.class}</a>
-        <span className="sep">›</span>
-        <span style={{ color: 'var(--smokebox)' }}>{P.liveries[0].road} · {P.liveries[0].livery}</span>
+        <span style={{ color: 'var(--smokebox)' }}>{P.class} · {P.liveries[0].road}</span>
       </div>
 
       <div className="pd-grid">
         <div className="pd-gallery">
-          <Placeholder label={`${P.class} three-quarter hero`} detail="studio · bone bg" corner={`UM-PRD-${P.class.replace(/\D/g, '')} / 01`} scaleRule className="hero-img" src={P.img} />
-          <div className="grid-imgs">
-            {P.gallery.map((g, i) => (
-              <Placeholder key={i} label={`${P.class} livery`} detail="catalogue render" corner={String(i + 2).padStart(2, '0')} src={g} />
-            ))}
-          </div>
+          <Placeholder label={`${P.class} three-quarter hero`} detail="studio · bone bg" corner={`UM-PRD-${P.class.replace(/\D/g, '') || P.class} / 01`} scaleRule className="hero-img" src={P.img} priority />
+          {P.gallery.length > 0 && (
+            <div className="grid-imgs">
+              {P.gallery.map((g, i) => (
+                <Placeholder key={i} label={`${P.class} livery`} detail="catalogue render" corner={String(i + 2).padStart(2, '0')} src={g} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="pd-info">
           <div className="class">{P.class} · {P.state} · #{P.liveries[0].road}</div>
           <h1 className="display">{P.title}</h1>
-          <div className="mfr">{P.mfr} · HO 1:87 · Factory new · in stock</div>
+          <div className="mfr">
+            {P.mfr} · HO 1:87 · {inStock ? 'Factory new · in stock' : `Pre-order · expected ${P.eta} ${P.year}`}
+          </div>
 
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
-            <StatusBadge kind="in" />
+            <StatusBadge kind={inStock ? 'in' : 'pre'} eta={inStock ? null : `${P.eta} ${P.year}`} />
             <span className="badge stock-pre" style={{ background: 'var(--timetable)' }}>
               <span className="dot" /> DCC Sound option
             </span>
@@ -71,7 +77,9 @@ export default function ProductNew({ setPage }) {
           </div>
 
           <div className="price-row">
-            <div className="price tnum">A${unitPrice}.00 <small>excl. GST</small></div>
+            <div className="price tnum">
+              A${unitPrice}.00 <small>{inStock ? 'excl. GST' : 'indicative · excl. GST'}</small>
+            </div>
             <div style={{ textAlign: 'right', fontSize: 12, color: 'var(--steel)' }}>
               <div>or 4 × <strong className="tnum" style={{ color: 'var(--smokebox)' }}>A${(unitPrice / 4).toFixed(2)}</strong></div>
               <div style={{ marginTop: 2 }}>Afterpay available</div>
@@ -86,27 +94,43 @@ export default function ProductNew({ setPage }) {
             <li><span className="k">Lighting</span><span className="v">Operating directional LED headlights</span></li>
             <li><span className="k">Couplers</span><span className="v">Metal knuckle couplers</span></li>
             <li><span className="k">Wheels</span><span className="v">Blackened metal disc · RP25-110</span></li>
-            <li><span className="k">Era</span><span className="v">{P.state} · {P.era}</span></li>
+            <li><span className="k">Type</span><span className="v">{P.state} · {P.era}</span></li>
           </ul>
 
-          <div className="pd-actions">
-            <div className="qty">
-              <button onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
-              <span className="val">{qty}</span>
-              <button onClick={() => setQty(qty + 1)}>+</button>
-            </div>
-            <button className="btn primary" style={{ flex: 1 }}>
-              Add to cart · A${(unitPrice * qty).toFixed(2)}
-            </button>
-            <button className="btn ghost" aria-label="Save">♡</button>
-          </div>
-
-          <div className="pd-callout">
-            <span className="ico">i</span>
-            <div>
-              <strong>In stock at Marrickville.</strong> Ships within one business day, packed in a foam-lined Auscision box inside a fitted outer carton. Free shipping over A$250.
-            </div>
-          </div>
+          {inStock ? (
+            <>
+              <div className="pd-actions">
+                <div className="qty">
+                  <button onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
+                  <span className="val">{qty}</span>
+                  <button onClick={() => setQty(qty + 1)}>+</button>
+                </div>
+                <button className="btn primary" style={{ flex: 1 }}>
+                  Add to cart · A${(unitPrice * qty).toFixed(2)}
+                </button>
+                <button className="btn ghost" aria-label="Save">♡</button>
+              </div>
+              <div className="pd-callout">
+                <span className="ico">i</span>
+                <div>
+                  <strong>In stock at Marrickville.</strong> Ships within one business day, packed in a foam-lined Auscision box inside a fitted outer carton. Free shipping over A$250.
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="pd-actions">
+                <button className="btn primary" style={{ flex: 1 }}>Reserve a slot · A$50 deposit</button>
+                <button className="btn ghost" aria-label="Save">♡</button>
+              </div>
+              <div className="pd-callout">
+                <span className="ico">i</span>
+                <div>
+                  <strong>{P.note}</strong> A$50 refundable deposit holds your slot; the balance is charged on despatch. Cancel any time before factory sample approval for a full refund.
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="dcc-player">
             <button className="play" onClick={() => setPlaying(p => !p)} aria-label="Play sound demo">
@@ -138,7 +162,7 @@ export default function ProductNew({ setPage }) {
           ['prototype', 'Prototype notes'],
           ['liveries', `Liveries (${P.liveries.length})`],
           ['compat', 'Compatibility'],
-          ['policy', 'Shipping & returns'],
+          ['policy', inStock ? 'Shipping & returns' : 'Pre-order & returns'],
         ].map(([k, l]) => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>{l}</button>
         ))}
@@ -158,7 +182,7 @@ export default function ProductNew({ setPage }) {
         <div className="related-grid" style={{ marginTop: 32 }}>
           {P.liveries.map((r, i) => (
             <article key={i} className="product-card">
-              <Placeholder label={`${P.class} · #${r.road}`} detail={r.livery} corner={`L0${i + 1}`} />
+              <Placeholder label={`${P.class} · #${r.road}`} detail={r.livery} corner={`L0${i + 1}`} src={i === 0 ? P.img : undefined} />
               <div>
                 <h4 className="title">{r.road} <span style={{ color: 'var(--steel)', fontWeight: 400, fontFamily: 'var(--body)', fontSize: 14 }}>· {r.livery}</span></h4>
                 <div className="sub" style={{ marginTop: 6 }}>{P.mfr}</div>
@@ -182,8 +206,17 @@ export default function ProductNew({ setPage }) {
 
       {tab === 'policy' && (
         <div className="pd-prose">
-          <p><strong>Returns:</strong> 30 days, original box and decoder unprogrammed. Sound-fitted models are tested on our rolling road before despatch; if an issue is identified within 30 days we'll repair or refund.</p>
-          <p><strong>Shipping:</strong> Free Australia-wide on orders over A$250. Models are packed in a foam-lined box inside a fitted outer carton.</p>
+          {inStock ? (
+            <>
+              <p><strong>Returns:</strong> 30 days, original box and decoder unprogrammed. Sound-fitted models are tested on our rolling road before despatch; if an issue is identified within 30 days we'll repair or refund.</p>
+              <p><strong>Shipping:</strong> Free Australia-wide on orders over A$250. Models are packed in a foam-lined box inside a fitted outer carton.</p>
+            </>
+          ) : (
+            <>
+              <p><strong>Pre-orders:</strong> A$50 deposit at reservation, balance charged at despatch. Cancel any time before factory sample approval for a full refund.</p>
+              <p><strong>Returns:</strong> 30 days from despatch, original box and decoder unprogrammed. Sound-fitted models are tested on our rolling road before despatch.</p>
+            </>
+          )}
         </div>
       )}
     </div>

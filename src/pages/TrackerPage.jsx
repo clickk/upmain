@@ -4,7 +4,7 @@ import { TRACKER_DATA } from '../data/index.js'
 
 const STAGES = ['Announced', 'Confirmed', 'Sample', 'Production', 'Shipping', 'Arrived']
 
-export default function TrackerPage() {
+export default function TrackerPage({ setPage }) {
   const [filters, setFilters] = React.useState({ class: 'all', mfr: 'all', scale: 'all', stage: 'all' })
   const [sort, setSort] = React.useState('eta')
 
@@ -147,7 +147,7 @@ export default function TrackerPage() {
               ) : (
                 <button className="btn primary small">Reserve · A$50</button>
               )}
-              <button className="btn ghost small" style={{ padding: '6px 14px', fontSize: 12 }}>Details →</button>
+              <button className="btn ghost small" style={{ padding: '6px 14px', fontSize: 12 }} onClick={() => setPage('product-new', { id: r.id })}>Details →</button>
             </div>
           </div>
         ))}

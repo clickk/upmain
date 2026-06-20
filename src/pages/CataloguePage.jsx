@@ -24,7 +24,7 @@ function ProductGrid({ items, setPage }) {
   return (
     <div className="catalogue-grid">
       {items.map(p => (
-        <article key={p.id} className="product-card catalogue-card" onClick={() => setPage('product-new')} style={{ cursor: 'pointer' }}>
+        <article key={p.id} className="product-card catalogue-card" onClick={() => setPage('product-new', { id: p.id })} style={{ cursor: 'pointer' }}>
           <Placeholder label={`${p.class} · ${p.state}`} detail={p.liveries[0].livery} corner={`UM-${p.class.replace(/\D/g, '') || p.class}`} src={p.img} />
           <div className="eyebrow">{p.class} · {p.mfr}</div>
           <h4 className="title" style={{ fontSize: 20 }}>{p.title}</h4>
@@ -86,7 +86,7 @@ export default function CataloguePage({ setPage, params = {} }) {
                 <span className="k">Price</span>
                 <span className="price tnum">{m.price}</span>
               </div>
-              <button className="btn small" onClick={() => setPage('product-used')}>View</button>
+              <button className="btn small" onClick={() => setPage('product-used', { id: m.road })}>View</button>
             </div>
           ))}
         </div>

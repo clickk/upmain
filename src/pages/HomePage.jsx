@@ -24,10 +24,10 @@ export default function HomePage({ setPage }) {
           </h1>
           <p>{HERO.desc}</p>
           <div className="row">
-            <button className="btn primary" onClick={() => setPage('product-new')}>
+            <button className="btn primary" onClick={() => setPage('product-new', { id: HERO.id })}>
               Shop · from A${HERO.dcPrice}
             </button>
-            <button className="btn ghost" onClick={() => setPage('product-new')}>Read prototype notes</button>
+            <button className="btn ghost" onClick={() => setPage('product-new', { id: HERO.id })}>Read prototype notes</button>
           </div>
           <div className="specs">
             <div>
@@ -45,7 +45,7 @@ export default function HomePage({ setPage }) {
           </div>
         </div>
         <div className="visual">
-          <Placeholder label={`${HERO.class} three-quarter hero`} detail="studio · bone bg · scale rule" corner="UM-45 / 01" scaleRule src={HERO.img} />
+          <Placeholder label={`${HERO.class} three-quarter hero`} detail="studio · bone bg · scale rule" corner="UM-45 / 01" scaleRule src={HERO.img} priority />
         </div>
       </section>
 
@@ -116,7 +116,7 @@ export default function HomePage({ setPage }) {
                 <StatusBadge kind="in" />
                 <span className="price tnum" style={{ fontSize: 16 }}>A${p.dcPrice} – {p.soundPrice}</span>
               </div>
-              <button className="btn small" onClick={() => setPage('product-new')}>View</button>
+              <button className="btn small" onClick={() => setPage('product-new', { id: p.id })}>View</button>
             </article>
           ))}
         </div>
@@ -161,7 +161,7 @@ export default function HomePage({ setPage }) {
                 <span className="k">Price</span>
                 <span className="price tnum">{m.price}</span>
               </div>
-              <button className="btn small" onClick={() => setPage('product-used')}>View</button>
+              <button className="btn small" onClick={() => setPage('product-used', { id: m.road })}>View</button>
             </div>
           ))}
         </div>

@@ -65,6 +65,7 @@ export const Placeholder = ({
   scaleRule = false,
   corner,
   src,
+  priority = false,
   style,
   className = '',
 }) => {
@@ -72,7 +73,13 @@ export const Placeholder = ({
     return (
       <div className={`ph has-img ${className}`} style={style}>
         {corner ? <div className="corner">{corner}</div> : null}
-        <img src={src} alt={label} loading="lazy" />
+        <img
+          src={src}
+          alt={label}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          decoding="async"
+        />
       </div>
     )
   }
