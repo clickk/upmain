@@ -8,19 +8,28 @@ export default function TrackerPage() {
   const [filters, setFilters] = React.useState({ class: 'all', mfr: 'all', scale: 'all', stage: 'all' })
   const [sort, setSort] = React.useState('eta')
 
-  const filtered = TRACKER_DATA.filter(d => {
-    if (filters.class !== 'all' && d.class !== filters.class) return false
-    if (filters.mfr !== 'all' && d.mfr !== filters.mfr) return false
-    if (filters.scale !== 'all' && d.scale !== filters.scale) return false
-    if (filters.stage !== 'all' && d.stage !== filters.stage) return false
-    return true
-  })
+  const filtered = TRACKER_DATA
+    .filter(d => {
+      if (filters.class !== 'all' && d.class !== filters.class) return false
+      if (filters.mfr !== 'all' && d.mfr !== filters.mfr) return false
+      if (filters.scale !== 'all' && d.scale !== filters.scale) return false
+      if (filters.stage !== 'all' && d.stage !== filters.stage) return false
+      return true
+    })
+    .slice()
+    .sort((a, b) => {
+      if (sort === 'stage') return b.stage - a.stage
+      if (sort === 'class') return a.class.localeCompare(b.class, undefined, { numeric: true })
+      // 'eta' — soonest first, by year then quarter
+      return (a.year + a.quarter).localeCompare(b.year + b.quarter)
+    })
 
   const clearFilters = () => setFilters({ class: 'all', mfr: 'all', scale: 'all', stage: 'all' })
   const hasFilters = Object.values(filters).some(v => v !== 'all')
 
-  const classOptions = ['38', '42', '44', '421', '422', '81', '86']
-  const mfrOptions = ['Auscision Models', 'Eureka Models', 'SDS Models', 'Casula Hobbies']
+  // Derive filter options from the live data
+  const classOptions = [...new Set(TRACKER_DATA.map(d => d.class))]
+  const scaleOptions = [...new Set(TRACKER_DATA.map(d => d.scale))]
 
   return (
     <div className="tracker-shell">
@@ -39,13 +48,12 @@ export default function TrackerPage() {
       <div className="tracker-filters">
         <span className="eyebrow" style={{ alignSelf: 'center', marginRight: 8 }}>Filter</span>
 
-        {classOptions.map(c => {
-          const full = `${c} class`
+        {classOptions.map(full => {
           const active = filters.class === full
           return (
-            <button key={c} className={`chip ${active ? 'active' : ''}`}
+            <button key={full} className={`chip ${active ? 'active' : ''}`}
               onClick={() => setFilters(f => ({ ...f, class: active ? 'all' : full }))}>
-              <span className="tnum">{c}</span> class
+              {full}
               <span className="count tnum">{TRACKER_DATA.filter(d => d.class === full).length}</span>
             </button>
           )
@@ -53,20 +61,7 @@ export default function TrackerPage() {
 
         <span style={{ width: 1, background: 'var(--timetable-line)', alignSelf: 'stretch', margin: '0 4px' }} />
 
-        {mfrOptions.map(m => {
-          const active = filters.mfr === m
-          return (
-            <button key={m} className={`chip ${active ? 'active' : ''}`}
-              onClick={() => setFilters(f => ({ ...f, mfr: active ? 'all' : m }))}>
-              {m.replace(' Models', '').replace(' Hobbies', '')}
-              <span className="count tnum">{TRACKER_DATA.filter(d => d.mfr === m).length}</span>
-            </button>
-          )
-        })}
-
-        <span style={{ width: 1, background: 'var(--timetable-line)', alignSelf: 'stretch', margin: '0 4px' }} />
-
-        {['HO', 'N'].map(s => {
+        {scaleOptions.map(s => {
           const active = filters.scale === s
           return (
             <button key={s} className={`chip ${active ? 'active' : ''}`}

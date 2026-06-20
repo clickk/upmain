@@ -1,33 +1,14 @@
 import React from 'react'
 import { Placeholder, StatusBadge, GradingBadge } from '../components/Brand.jsx'
-import { MARKETPLACE_ITEMS, CLASS_INDEX } from '../data/index.js'
+import { IN_STOCK, TRACKER_DATA, MARKETPLACE_ITEMS, CLASS_INDEX, PRODUCTS } from '../data/index.js'
 
-const PREORDER_CARDS = [
-  {
-    class: '421 / 422 class',
-    title: 'Auscision 422 class in Reverse Indian Red',
-    mfr: 'Auscision Models · HO',
-    stage: 'Factory sample', stageIdx: 2,
-    price: 'A$589 – 639', eta: 'Q3 2026',
-    taken: 78, cap: 120,
-  },
-  {
-    class: '81 class',
-    title: 'SDS 81 class candy livery, original Brunswick roof',
-    mfr: 'SDS Models · HO',
-    stage: 'In production', stageIdx: 3,
-    price: 'A$525', eta: 'August 2026',
-    taken: 142, cap: 200,
-  },
-  {
-    class: '86 class',
-    title: 'Casula 86 class, Indian Red with grey roof',
-    mfr: 'Casula Hobbies · HO',
-    stage: 'Confirmed', stageIdx: 1,
-    price: 'A$695', eta: 'Q1 2027',
-    taken: 31, cap: 150,
-  },
-]
+const STAGE_LABELS = ['Announced', 'Confirmed', 'Sample', 'Production', 'Shipping']
+
+// Hero = the headline in-stock 45 Class
+const HERO = PRODUCTS.find(p => p.id === '45-class')
+
+// Live pre-orders strip = the three soonest upcoming releases
+const PREORDERS = TRACKER_DATA.slice(0, 3)
 
 export default function HomePage({ setPage }) {
   return (
@@ -35,20 +16,18 @@ export default function HomePage({ setPage }) {
       {/* ─── Hero ─── */}
       <section className="hero">
         <div className="copy">
-          <div className="eyebrow">This week's release · No. 142</div>
+          <div className="eyebrow">Latest release · Auscision Models</div>
           <h1 className="display">
-            Eureka 38 class<br />
-            <em>streamliner</em>, 3801<br />
-            in original green.
+            {HERO.class}<br />
+            <em>diesel-electric</em>,<br />
+            in original red.
           </h1>
-          <p>
-            A factory-correct 1943 build of New South Wales' most photographed locomotive,
-            in Caledonian Green with red-and-yellow lining. Sound-fitted with the
-            revised ESU LokSound 5 file recorded off 3801 herself on the Picton bank.
-          </p>
+          <p>{HERO.desc}</p>
           <div className="row">
-            <button className="btn primary">Reserve · A$1,395</button>
-            <button className="btn ghost">Read prototype notes</button>
+            <button className="btn primary" onClick={() => setPage('product-new')}>
+              Shop · from A${HERO.dcPrice}
+            </button>
+            <button className="btn ghost" onClick={() => setPage('product-new')}>Read prototype notes</button>
           </div>
           <div className="specs">
             <div>
@@ -60,13 +39,13 @@ export default function HomePage({ setPage }) {
               <span className="v display">Sound</span>
             </div>
             <div>
-              <span className="k">Edition</span>
-              <span className="v tnum display">340</span>
+              <span className="k">Road numbers</span>
+              <span className="v tnum display">{HERO.units}</span>
             </div>
           </div>
         </div>
         <div className="visual">
-          <Placeholder label="3801 three-quarter hero" detail="studio · bone bg · scale rule" corner="UM-142 / 01" scaleRule />
+          <Placeholder label={`${HERO.class} three-quarter hero`} detail="studio · bone bg · scale rule" corner="UM-45 / 01" scaleRule />
         </div>
       </section>
 
@@ -78,45 +57,72 @@ export default function HomePage({ setPage }) {
             <h2>On the books, in batch.</h2>
           </div>
           <div className="meta">
-            <span>Refreshed Tuesday, 12 May</span>
+            <span>Refreshed weekly</span>
             <a onClick={() => setPage('tracker')} style={{ cursor: 'pointer' }}>See the full tracker →</a>
           </div>
         </div>
 
         <div className="preorder-strip">
-          {PREORDER_CARDS.map((p, i) => (
+          {PREORDERS.map((p, i) => (
             <article key={i} className="preorder-card">
-              <Placeholder label={`${p.class} pre-order`} detail={`render · ${p.mfr.split(' · ')[0]}`} corner={`PRE-0${i + 1}`} />
+              <Placeholder label={`${p.class} pre-order`} detail={`render · ${p.mfr.split(' ')[0]}`} corner={`PRE-0${i + 1}`} />
               <div className="eyebrow">{p.class} · {p.mfr}</div>
               <h3>{p.title}</h3>
               <div className="progress">
-                <div className="fill" style={{ width: `${(p.taken / p.cap) * 100}%` }} />
+                <div className="fill" style={{ width: `${((p.stage + 1) / 5) * 100}%` }} />
               </div>
               <div className="stages">
-                {['Announced', 'Confirmed', 'Sample', 'Production', 'Shipping'].map((s, j) => (
-                  <span key={s} className={p.stageIdx >= j ? 'on' : ''}>{s}</span>
+                {STAGE_LABELS.map((s, j) => (
+                  <span key={s} className={p.stage >= j ? 'on' : ''}>{s}</span>
                 ))}
               </div>
               <div className="row">
                 <div>
                   <div className="eyebrow" style={{ marginBottom: 2 }}>Status</div>
-                  <StatusBadge kind="pre" eta={p.eta} />
+                  <StatusBadge kind="pre" eta={`${p.eta} ${p.year}`} />
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div className="eyebrow" style={{ marginBottom: 2 }}>Indicative</div>
                   <strong className="tnum" style={{ fontSize: 16 }}>{p.price}</strong>
                 </div>
               </div>
-              <button className="btn ghost small">Reserve a slot</button>
+              <button className="btn ghost small" onClick={() => setPage('tracker')}>Reserve a slot</button>
               <div style={{ fontSize: 12, color: 'var(--steel)', marginTop: -4 }}>
-                <span className="tnum">{p.taken}</span> of <span className="tnum">{p.cap}</span> reserved · A$50 deposit, refundable to release
+                <span className="tnum">{p.units}</span> road numbers · A$50 deposit, refundable to release
               </div>
             </article>
           ))}
         </div>
       </section>
 
-      {/* ─── Marketplace ─── */}
+      {/* ─── In stock now ─── */}
+      <section className="section">
+        <div className="section-head">
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>In stock now</div>
+            <h2>Ready to run, on the shelf.</h2>
+          </div>
+          <div className="meta">
+            <a onClick={() => setPage('product-new')} style={{ cursor: 'pointer' }}>Browse all locomotives →</a>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gutter)' }}>
+          {IN_STOCK.map((p, i) => (
+            <article key={p.id} className="product-card" style={{ border: '1px solid var(--timetable-line)', background: 'var(--bone)', padding: 22 }}>
+              <Placeholder label={`${p.class} · ${p.state}`} detail={p.liveries[0].livery} corner={`UM-${p.class.replace(/\D/g, '') || p.class}`} />
+              <div className="eyebrow">{p.class} · {p.mfr}</div>
+              <h4 className="title" style={{ fontSize: 22 }}>{p.title}</h4>
+              <div className="meta">
+                <StatusBadge kind="in" />
+                <span className="price tnum" style={{ fontSize: 16 }}>A${p.dcPrice} – {p.soundPrice}</span>
+              </div>
+              <button className="btn small" onClick={() => setPage('product-new')}>View</button>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Marketplace (demo) ─── */}
       <section className="section">
         <div className="section-head">
           <div>
@@ -168,12 +174,12 @@ export default function HomePage({ setPage }) {
           <div className="copy">
             <div className="eyebrow on-dark">Prototype guide № 18</div>
             <h3 className="display-italic">
-              Reading the 422: how to tell a Phase I from a Phase II at twenty paces.
+              Reading the 44: how to tell a MK2 from a MK3 at twenty paces.
             </h3>
             <p>
-              Sandbox positioning, exhaust stack, dynamic brake bulge, fan grille spacing —
-              the small details that mark out the four pre-production 422 class units from
-              the production run. With detail crops, a comparison table, and what to look
+              Number boards, marker lights, handrail arrangement and roof detail —
+              the small differences that mark out the earlier 44 Class road numbers from
+              the later run. With detail crops, a comparison table, and what to look
               for when buying secondhand.
             </p>
             <div className="byline">
@@ -192,20 +198,20 @@ export default function HomePage({ setPage }) {
         <div className="section-head">
           <div>
             <div className="eyebrow" style={{ marginBottom: 12 }}>Browse by class</div>
-            <h2>NSWGR class index.</h2>
+            <h2>Australian outline class index.</h2>
           </div>
           <div className="meta">
-            <a style={{ cursor: 'pointer' }}>The full index, 38 → 86 →</a>
+            <a style={{ cursor: 'pointer' }}>The full index →</a>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 'var(--gutter)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--gutter)' }}>
           {CLASS_INDEX.map(c => (
             <a key={c.n} className="product-card" style={{ background: 'var(--bone)', padding: 20, border: '1px solid var(--timetable-line)', cursor: 'pointer' }}>
-              <div className="tnum display" style={{ fontSize: 56, lineHeight: 0.9, marginTop: 4 }}>{c.n}</div>
+              <div className="tnum display" style={{ fontSize: 48, lineHeight: 0.9, marginTop: 4 }}>{c.n}</div>
               <div>
                 <div style={{ fontFamily: 'var(--display)', fontSize: 16, marginTop: 6 }}>{c.sub}</div>
                 <div style={{ color: 'var(--steel)', fontSize: 12.5, fontFamily: 'var(--mono)', marginTop: 4 }}>
-                  {c.era} · {c.count} liveries
+                  {c.count} run{c.count > 1 ? 's' : ''} · {c.liveries} liveries
                 </div>
               </div>
             </a>

@@ -1,12 +1,17 @@
 import React from 'react'
 import { Placeholder, StatusBadge } from '../components/Brand.jsx'
-import { NEW_PRODUCTS } from '../data/index.js'
+import { FEATURED_NEW } from '../data/index.js'
+
+const P = FEATURED_NEW // 421 Class
 
 export default function ProductNew({ setPage }) {
   const [tab, setTab] = React.useState('prototype')
   const [qty, setQty] = React.useState(1)
+  const [sound, setSound] = React.useState(true)
   const [playing, setPlaying] = React.useState(false)
   const [lit, setLit] = React.useState(8)
+
+  const unitPrice = sound ? P.soundPrice : P.dcPrice
 
   React.useEffect(() => {
     if (!playing) return
@@ -21,14 +26,14 @@ export default function ProductNew({ setPage }) {
         <span className="sep">›</span>
         <a style={{ cursor: 'pointer' }}>Diesel</a>
         <span className="sep">›</span>
-        <a style={{ cursor: 'pointer' }}>422 class</a>
+        <a style={{ cursor: 'pointer' }}>{P.class}</a>
         <span className="sep">›</span>
-        <span style={{ color: 'var(--smokebox)' }}>422.6 in Reverse Indian Red</span>
+        <span style={{ color: 'var(--smokebox)' }}>{P.liveries[0].road} · {P.liveries[0].livery}</span>
       </div>
 
       <div className="pd-grid">
         <div className="pd-gallery">
-          <Placeholder label="422.6 three-quarter hero" detail="studio · bone bg" corner="UM-PRD-422 / 01" scaleRule className="hero-img" />
+          <Placeholder label={`${P.class} three-quarter hero`} detail="studio · bone bg" corner={`UM-PRD-${P.class.replace(/\D/g, '')} / 01`} scaleRule className="hero-img" />
           <div className="grid-imgs">
             <Placeholder label="side elevation" detail="full broadside" corner="02" />
             <Placeholder label="cab detail" detail="number boards" corner="03" />
@@ -37,39 +42,51 @@ export default function ProductNew({ setPage }) {
         </div>
 
         <div className="pd-info">
-          <div className="class">422 class · Phase II · #422.6</div>
-          <h1 className="display">
-            Auscision 422.6 in <span style={{ fontStyle: 'italic' }}>Reverse</span> Indian Red
-          </h1>
-          <div className="mfr">Auscision Models · HO 1:87 · Factory new · 2026 production run</div>
+          <div className="class">{P.class} · {P.state} · #{P.liveries[0].road}</div>
+          <h1 className="display">{P.title}</h1>
+          <div className="mfr">{P.mfr} · HO 1:87 · Factory new · in stock</div>
 
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
             <StatusBadge kind="in" />
             <span className="badge stock-pre" style={{ background: 'var(--timetable)' }}>
-              <span className="dot" /> DCC Sound
+              <span className="dot" /> DCC Sound option
             </span>
             <span className="badge stock-pre" style={{ background: 'var(--timetable)' }}>
-              <span className="dot" /> Edition of 220
+              <span className="dot" /> {P.units} road numbers
             </span>
           </div>
 
+          {/* DC / DCC Sound selector */}
+          <div className="variant-toggle">
+            <button className={!sound ? 'active' : ''} onClick={() => setSound(false)}>
+              <span className="vt-label">Standard DC</span>
+              <span className="vt-price tnum">A${P.dcPrice}.00</span>
+              <span className="vt-note">DCC ready · 21-pin</span>
+            </button>
+            <button className={sound ? 'active' : ''} onClick={() => setSound(true)}>
+              <span className="vt-label">DCC Sound</span>
+              <span className="vt-price tnum">A${P.soundPrice}.00</span>
+              <span className="vt-note">ESU LokSound 5 fitted</span>
+            </button>
+          </div>
+
           <div className="price-row">
-            <div className="price tnum">A$639.00 <small>incl. GST</small></div>
+            <div className="price tnum">A${unitPrice}.00 <small>excl. GST</small></div>
             <div style={{ textAlign: 'right', fontSize: 12, color: 'var(--steel)' }}>
-              <div>or 4 × <strong className="tnum" style={{ color: 'var(--smokebox)' }}>A$159.75</strong></div>
+              <div>or 4 × <strong className="tnum" style={{ color: 'var(--smokebox)' }}>A${(unitPrice / 4).toFixed(2)}</strong></div>
               <div style={{ marginTop: 2 }}>Afterpay available</div>
             </div>
           </div>
 
           <ul className="spec-list">
             <li><span className="k">Scale</span><span className="v">HO 1:87 · 16.5mm gauge</span></li>
-            <li><span className="k">DCC</span><span className="v">ESU LokSound 5 · 21-pin · sugar cube speaker</span></li>
-            <li><span className="k">Motor</span><span className="v">5-pole skew-wound · flywheels both ends</span></li>
-            <li><span className="k">Lighting</span><span className="v">Directional LED · cab interior · marker lights</span></li>
-            <li><span className="k">Couplers</span><span className="v">Kadee #158 fitted · NEM pockets</span></li>
-            <li><span className="k">Minimum radius</span><span className="v">457mm (18")</span></li>
-            <li><span className="k">Weight</span><span className="v">428g</span></li>
-            <li><span className="k">Era</span><span className="v">IV · 1980 – 1995</span></li>
+            <li><span className="k">DCC</span><span className="v">{P.dcc}</span></li>
+            <li><span className="k">Motor</span><span className="v">5-pole skew-wound · twin brass flywheels</span></li>
+            <li><span className="k">Drive</span><span className="v">All-wheel drive &amp; electrical pickup</span></li>
+            <li><span className="k">Lighting</span><span className="v">Operating directional LED headlights</span></li>
+            <li><span className="k">Couplers</span><span className="v">Metal knuckle couplers</span></li>
+            <li><span className="k">Wheels</span><span className="v">Blackened metal disc · RP25-110</span></li>
+            <li><span className="k">Era</span><span className="v">{P.state} · {P.era}</span></li>
           </ul>
 
           <div className="pd-actions">
@@ -79,7 +96,7 @@ export default function ProductNew({ setPage }) {
               <button onClick={() => setQty(qty + 1)}>+</button>
             </div>
             <button className="btn primary" style={{ flex: 1 }}>
-              Add to cart · A${(639 * qty).toFixed(2)}
+              Add to cart · A${(unitPrice * qty).toFixed(2)}
             </button>
             <button className="btn ghost" aria-label="Save">♡</button>
           </div>
@@ -87,7 +104,7 @@ export default function ProductNew({ setPage }) {
           <div className="pd-callout">
             <span className="ico">i</span>
             <div>
-              <strong>Three left in stock at Marrickville.</strong> Ships within one business day, packed in a foam-lined Auscision box inside a fitted outer carton. Free shipping over A$250.
+              <strong>In stock at Marrickville.</strong> Ships within one business day, packed in a foam-lined Auscision box inside a fitted outer carton. Free shipping over A$250.
             </div>
           </div>
 
@@ -103,13 +120,13 @@ export default function ProductNew({ setPage }) {
                 ))}
               </div>
               <div style={{ fontSize: 11, opacity: 0.6, marginTop: 6, letterSpacing: '0.04em' }}>
-                Sound demo · 422.6 idle → notch 4 → notch 8 · 0:42
+                Sound demo · {P.class} idle → notch 4 → notch 8 · 0:42
               </div>
             </div>
             <div className="label">
               <span className="k">DCC Sound</span>
               ESU LokSound 5<br />
-              recorded on 422.6
+              {P.class} sound file
             </div>
           </div>
         </div>
@@ -119,9 +136,9 @@ export default function ProductNew({ setPage }) {
       <div className="tabs">
         {[
           ['prototype', 'Prototype notes'],
-          ['liveries', 'Related liveries (4)'],
+          ['liveries', `Liveries (${P.liveries.length})`],
           ['compat', 'Compatibility'],
-          ['policy', 'Pre-order & returns'],
+          ['policy', 'Shipping & returns'],
         ].map(([k, l]) => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>{l}</button>
         ))}
@@ -129,34 +146,26 @@ export default function ProductNew({ setPage }) {
 
       {tab === 'prototype' && (
         <div className="pd-prose">
-          <p><strong>422 class, Phase II.</strong> The 422 class entered service in 1969 as the
-          NSWGR's first six-axle diesel-electric, ordered from Clyde Engineering with EMD 645E3
-          prime movers in a then-novel 12-cylinder configuration. 422.6 was outshopped in
-          April 1970, and ran out her first six years in standard Indian Red before being
-          reshopped at Eveleigh in 1976 in the inverted scheme this model captures.</p>
-          <p>Auscision's tooling is to the Phase II body, distinguished from the four
-          pre-production units by the spaced fan grilles, the relocated sandboxes ahead of
-          the lead bogie, and the squared dynamic brake bulge. Lining is tampo-printed,
-          handrails are pre-fitted from chemically-blackened brass, and the number boards
-          are translucent for prototypically-lit operation.</p>
-          <p>The included LokSound 5 file was recorded by Hamish Tory at Junee in 2024 from
-          422.6 herself, recently returned to service with Southern Shorthaul Railroad and
-          still in this livery.</p>
+          <p><strong>{P.class}.</strong> {P.desc}</p>
+          <p>Each model is factory painted and decorated with laser-sharp printing, with
+          separately fitted metal detail parts, etched brass details and a highly detailed
+          underframe. DCC Sound versions carry an ESU LokSound 5 decoder with Auscision power
+          capacitors and a Vandersound speaker enclosure.</p>
         </div>
       )}
 
       {tab === 'liveries' && (
         <div className="related-grid" style={{ marginTop: 32 }}>
-          {NEW_PRODUCTS.map((r, i) => (
+          {P.liveries.map((r, i) => (
             <article key={i} className="product-card">
-              <Placeholder label={`422 class · #${r.road}`} detail={r.livery} corner={`L0${i + 1}`} />
+              <Placeholder label={`${P.class} · #${r.road}`} detail={r.livery} corner={`L0${i + 1}`} />
               <div>
                 <h4 className="title">{r.road} <span style={{ color: 'var(--steel)', fontWeight: 400, fontFamily: 'var(--body)', fontSize: 14 }}>· {r.livery}</span></h4>
-                <div className="sub" style={{ marginTop: 6 }}>Auscision Models</div>
+                <div className="sub" style={{ marginTop: 6 }}>{P.mfr}</div>
               </div>
               <div className="meta">
-                <StatusBadge kind={r.stock} eta={r.eta} />
-                <span className="price tnum">{r.price}</span>
+                <StatusBadge kind={r.stock} />
+                <span className="price tnum">A${P.dcPrice}</span>
               </div>
             </article>
           ))}
@@ -165,16 +174,16 @@ export default function ProductNew({ setPage }) {
 
       {tab === 'compat' && (
         <div className="pd-prose">
-          <p><strong>Track:</strong> Code 75, 83, or 100. Minimum radius 457mm in DCC, 380mm in DC. NEM pockets accept Kadee #158, #148, or #156.</p>
-          <p><strong>DCC:</strong> Pre-fitted ESU LokSound 5, 21-pin, with sugar-cube speaker baffled in the bunker. Compatible with all NMRA DCC systems. CV29 default for long address.</p>
-          <p><strong>DC:</strong> Operates from 6V on the rolling road. Cab and marker lights are LED-fed via the decoder; on pure DC, lights are not directional.</p>
+          <p><strong>Track:</strong> Code 75, 83, or 100. Minimum radius 457mm (18"). NEM pockets accept Kadee #158, #148, or #156.</p>
+          <p><strong>DCC:</strong> {P.dcc}. Compatible with all NMRA DCC systems. DCC ready models ship with a 21-pin socket.</p>
+          <p><strong>DC:</strong> Standard models operate on DC. Note that DCC Sound models will not function on standard DC.</p>
         </div>
       )}
 
       {tab === 'policy' && (
         <div className="pd-prose">
           <p><strong>Returns:</strong> 30 days, original box and decoder unprogrammed. Sound-fitted models are tested on our rolling road before despatch; if an issue is identified within 30 days we'll repair or refund.</p>
-          <p><strong>Pre-orders:</strong> A$50 deposit at reservation, balance charged at despatch. Cancel any time before factory sample approval for a full refund.</p>
+          <p><strong>Shipping:</strong> Free Australia-wide on orders over A$250. Models are packed in a foam-lined box inside a fitted outer carton.</p>
         </div>
       )}
     </div>
